@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Lambda functions for bood (prod / stg)
+
+  '
+Globals:
+  Function:
+    Timeout: 20
+    MemorySize: 512
+Resources:
+  EstablishmentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: establishments-api
+      CodeUri: EstablishmentFunction
+      Handler: establishment.App::handleRequest
+      Runtime: java21
+      Architectures:
+      - x86_64
+      MemorySize: 512
+      Events:
+        EstablishmentApi:
+          Type: Api
+          Properties:
+            Path: /establishments
+            Method: get
+    Metadata:
+      SamResourceId: EstablishmentFunction
+  ProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: products-api
+      CodeUri: ProductFunction
+      Handler: product.App::handleRequest
+      Runtime: java21
+      Architectures:
+      - x86_64
+      MemorySize: 512
+      Events:
+        ProductApi:
+          Type: Api
+          Properties:
+            Path: /products
+            Method: get
+    Metadata:
+      SamResourceId: ProductFunction

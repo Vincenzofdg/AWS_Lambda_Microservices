@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Lambda functions for bood (prod / stg)
+
+Globals:
+  Function:
+    Timeout: 20
+    MemorySize: 512
+
+#Parameters:
+#  Environment:
+#    Type: String
+#    Default: Prod
+#    AllowedValues:
+#      - Prod
+#      - Stage
+#    Description: "The environment for the application (Prod or Stage)"
+
+#Conditions:
+#  IsProd: !Equals [ !Ref Environment, prod ]
+#  IsStg: !Equals [ !Ref Environment, stg ]
+
+Resources:
+  EstablishmentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+#      FunctionName: !Sub "establishments-api-${Environment}"
+      FunctionName: establishments-api
+      CodeUri: EstablishmentFunction
+      Handler: establishment.App::handleRequest
+      Runtime: java21
+      Architectures:
+        - x86_64
+      MemorySize: 512
+#      Environment:
+#        Variables:
+#          PARAM1: VALUE
+#          ENVIRONMENT: !Ref Environment  # Definindo uma variável de ambiente para o Lambda
+      Events:
+        EstablishmentApi:
+          Type: Api
+          Properties:
+            Path: /establishments
+            Method: get
+
+  ProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+#      FunctionName: !Sub "products-api-${Environment}"
+      FunctionName: products-api
+      CodeUri: ProductFunction
+      Handler: product.App::handleRequest
+      Runtime: java21
+      Architectures:
+        - x86_64
+      MemorySize: 512
+#      Environment:
+#        Variables:
+#          PARAM1: VALUE
+#          ENVIRONMENT: !Ref Environment
+      Events:
+        ProductApi:
+          Type: Api
+          Properties:
+            Path: /products
+            Method: get
+
+
+
+
+#  ApplicationResourceGroup:
+#    Type: AWS::ResourceGroups::Group
+#    Properties:
+#      Name: !Sub "ApplicationInsights-SAM-${AWS::StackName}"
+#      ResourceQuery:
+#        Type: CLOUDFORMATION_STACK_1_0
+#
+#  ApplicationInsightsMonitoring:
+#    Type: AWS::ApplicationInsights::Application
+#    Properties:
+#      ResourceGroupName:
+#        Ref: ApplicationResourceGroup
+#      AutoConfigurationEnabled: 'true'
+
+#Outputs:
+#  EstablishmentsApi:
+#    Description: API Gateway endpoint URL for the environment-specific stage
+#    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/establishments/"
+#  EstablishmentFunction:
+#    Description: Establishment Lambda Function ARN
+#    Value: !GetAtt EstablishmentFunction.Arn
+#  EstablishmentFunctionIamRole:
+#    Description: Implicit IAM Role created for Establishment function
+#    Value: !GetAtt EstablishmentFunctionRole.Arn
